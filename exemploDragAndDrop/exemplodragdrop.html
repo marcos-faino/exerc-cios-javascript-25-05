@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+		<title>Arrastar e Soltar Javascript</title>
+        <style>
+            .container .row{
+                width: 90%;
+                height: 10rem;
+                padding: 3rem;
+            } 
+
+            .imagem{
+                background-size: contain; 
+                background-repeat: no-repeat; 
+            }
+            #abelha{
+                background-image: url('abelha.png');
+            }
+            #banana{
+                background-image: url('banana.webp');
+            }
+            #acertou{
+                background-image: url('feliz.png');
+                background-repeat: no-repeat;
+                background-position-x: center;
+                background-size: contain;
+                background-color: darkkhaki;
+                width: 100%;
+                height: 100%;
+                display: none;
+                position: absolute;
+                z-index: 1000;
+            }
+            #fechar{
+                float: right;
+            }
+            audio{
+                visibility: hidden;
+            }
+        </style>
+	</head>
+	<body>
+        <header class="container-fluid">
+            <h1>Testando</h1>
+            <button id="reiniciar" class="btn btn-primary">Começar de novo...</button>
+        </header>
+    
+        <div id="acertou">
+                <p><button class="btn btn-danger" id="fechar">X</button></p>
+                <p>
+                    <audio controls id="audio1">
+                        <source src="again.ogg">
+                            Não foi possível abrir o áudio
+                        </source>
+                    </audio>
+                    <audio controls id="audio2">
+                        <source src="feliz.mp3">
+                            Não foi possível abrir o áudio
+                        </source>
+                    </audio>
+                </p>
+        </div>
+        <div class="container row">    
+            <div class="col-md-3 offset-md-2">
+                <div id="abelha" class="row imagem">
+                </div>
+                <div id="banana" class="row imagem">
+                </div>
+            </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-3">
+                <div id="A" class="row">
+                    <p id="texto_a" draggable="true" style="font-size: 2rem;">A</p>
+                </div>
+                <div id="B" class="row">
+                    <p id="texto_b" draggable="true" style="font-size: 2rem;">B</p>
+                </div>
+            </div>
+        </div>
+        <script>
+            idelemento="";
+
+            function retornar_valor(origem, destino){
+                origem.innerHTML = destino.innerHTML;
+                destino.innerHTML = "";
+            }
+
+            function verificar_acerto(){
+                acerto = 0;
+                if(abelha.innerHTML.indexOf('texto_a') >= 0) {
+                    acerto++; //acerto = acerto + 1; 
+                    texto_a.draggable = false;
+                    abelha.ondrop = null;
+                }
+                if(banana.innerHTML.indexOf('texto_b') >= 0){
+                    acerto++;
+                    texto_b.draggable = false;
+                    banana.ondrop = null;
+                }
+
+                if(acerto == 0){
+                    acertou.style.backgroundImage = "url('denovo.png')";
+                    audio1.play();
+                }else{
+                    acertou.style.backgroundImage = "url('feliz.png')";
+                    audio2.play();
+
+                }
+                acertou.style.display = "block";
+            }
+            
+            fechar.onclick = function(){
+                acertou.style.display = "none";
+            }
+
+            banana.ondrop = function(ev){
+                ev.preventDefault();
+                banana.innerHTML = "";
+                ev.target.appendChild(document.getElementById(idelemento));
+                verificar_acerto();
+                if(banana.innerHTML.indexOf('texto_b') < 0){
+                    retornar_valor(A,this);
+                }                    
+            }
+            
+            abelha.ondrop = function(ev){
+                ev.preventDefault()
+                abelha.innerHTML = "";
+                ev.target.appendChild(document.getElementById(idelemento));
+                verificar_acerto();
+                if(abelha.innerHTML.indexOf('texto_a') < 0){
+                    retornar_valor(B,this);
+                }
+            }
+
+            B.ondragstart = function(ev){
+                idelemento = ev.target.id;
+            }
+
+            banana.ondragover = function(ev){
+                ev.preventDefault();
+            }
+            A.ondragstart = function(ev){
+                idelemento = ev.target.id;
+            }
+            abelha.ondragover = function(ev){
+                ev.preventDefault();
+            }
+
+            reiniciar.onclick = function(){
+                window.location.reload();
+            }
+        </script>
+	</body>
+</html>
